@@ -1,4 +1,3 @@
-from turtle import Screen
 import pygame
 from board import Board, SCREEN
 
