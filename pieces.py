@@ -40,8 +40,9 @@ class Piece:
         return move_piece
 
     def generate_valid_moves_bishop(self, start, finish, board):
-        pass
-    
+        if board.is_empty(finish[0], finish[1]) == False and board.background_board[finish[1]-1][finish[0]-1].color == self.color:
+            return False
+
     def generate_valid_moves_rook(self, start, finish, board):
         if board.is_empty(finish[0], finish[1]) == False and board.background_board[finish[1]-1][finish[0]-1].color == self.color:
             return False
