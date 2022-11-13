@@ -39,17 +39,15 @@ class Piece:
 
         return move_piece
 
-    def generate_valid_moves_bishop(self, start, finish, board):
-        if board.is_empty(finish[0], finish[1]) == False and board.background_board[finish[1]-1][finish[0]-1].color == self.color:
-            return False
+  
+
 
     def generate_valid_moves_rook(self, start, finish, board):
         if board.is_empty(finish[0], finish[1]) == False and board.background_board[finish[1]-1][finish[0]-1].color == self.color:
             return False
        
         else:
-          
-            if start == finish:
+            if (start == finish):
                 if board.is_empty(finish[0], finish[1]) == False and board.background_board[finish[1]-1][finish[0]-1].color != self.color:
                     self.kill_piece(finish[0], finish[1], board)
                     return True
@@ -77,9 +75,43 @@ class Piece:
                 return False
             
 
-            return self.generate_valid_moves_rook(start, finish, board)
+        return self.generate_valid_moves_rook(start, finish, board)
 
     
+    def generate_valid_moves_bishop(self, start, finish, board):
+        if board.is_empty(finish[0], finish[1]) == False and board.background_board[finish[1]-1][finish[0]-1].color == self.color:
+            return False
+        else:
+            if (start == finish):
+                if board.is_empty(finish[0], finish[1]) == False and board.background_board[finish[1]-1][finish[0]-1].color != self.color:
+                    self.kill_piece(finish[0], finish[1], board)
+                    return True
+                else:
+                    return True
+
+            if abs(start[0]-finish[0]) == abs(start[1]-finish[1]):
+                if (start[0] < finish[0]) and (start[1] > finish[1]):
+                    start[0] += 1
+                    start[1] -= 1
+                if (start[0] > finish[0]) and (start[1] < finish[1]):
+                    start[0] -= 1
+                    start[1] += 1
+                if (start[0] > finish[0]) and (start[1] > finish[1]):
+                    start[0] -=1
+                    start[1] -= 1
+                if (start[0] < finish[0]) and (start[1] < finish[1]):
+                    start[0] += 1
+                    start[1] += 1
+            else:
+                return False
+
+            
+            if board.is_empty(start[0], start[1]) == False and (start != finish):
+                return False
+        
+        return self.generate_valid_moves_bishop(start, finish, board)
+
+
     def kill_piece(self, x, y, board):
         if board.is_empty(x, y) == False:
             if (self.color == "white" and board.background_board[y-1][x-1].color == "black") or (self.color == "black" and board.background_board[y-1][x-1].color == "white"):

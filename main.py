@@ -63,6 +63,8 @@ def main():
                             if piece.color == "white" and (turn % 2 == 1):
                                 if piece.piece_type == "r":
                                     check = piece.generate_valid_moves_rook(list(moves[0]), list(moves[1]), board)
+                                elif piece.piece_type == "b":
+                                    check = piece.generate_valid_moves_bishop(list(moves[0]), list(moves[1]), board)
                                 else:
                                     check = piece.white_pawn_movement((first_click, second_click), (x, y), board)
                                 
@@ -75,7 +77,11 @@ def main():
                             
                             if piece.color == "black" and (turn % 2 == 0):
                                 if piece.piece_type == "r":
+                                    
                                     check = piece.generate_valid_moves_rook(list(moves[0]), list(moves[1]), board)
+                            
+                                elif piece.piece_type == "b":
+                                    check = piece.generate_valid_moves_bishop(list(moves[0]), list(moves[1]), board)
                                 else:
                                     check = piece.black_pawn_movement((first_click, second_click), (x, y), board)
                                 
