@@ -65,6 +65,8 @@ def main():
                                     check = piece.generate_valid_moves_rook(list(moves[0]), list(moves[1]), board)
                                 elif piece.piece_type == "b":
                                     check = piece.generate_valid_moves_bishop(list(moves[0]), list(moves[1]), board)
+                                elif piece.piece_type == "kn":
+                                    check = piece.generate_valid_moves_knight(list(moves[0]), list(moves[1]), board)
                                 else:
                                     check = piece.white_pawn_movement((first_click, second_click), (x, y), board)
                                 
@@ -81,7 +83,9 @@ def main():
                                     check = piece.generate_valid_moves_rook(list(moves[0]), list(moves[1]), board)
                             
                                 elif piece.piece_type == "b":
-                                    check = piece.generate_valid_moves_bishop(list(moves[0]), list(moves[1]), board)
+                                   check = piece.generate_valid_moves_bishop(list(moves[0]), list(moves[1]), board)
+                                elif piece.piece_type == "kn":
+                                    check = piece.generate_valid_moves_knight(list(moves[0]), list(moves[1]), board)
                                 else:
                                     check = piece.black_pawn_movement((first_click, second_click), (x, y), board)
                                 

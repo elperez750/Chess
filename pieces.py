@@ -77,6 +77,21 @@ class Piece:
 
         return self.generate_valid_moves_rook(start, finish, board)
 
+    def generate_valid_moves_knight(self, start, finish, board):
+        if abs(abs(start[0]-finish[0])- abs(start[1]-finish[1])) == 1:
+            if board.is_empty(finish[0], finish[1]) == False and board.background_board[finish[1]-1][finish[0]-1].color == self.color:
+                return False
+            if board.is_empty(finish[0], finish[1]) == False and board.background_board[finish[1]-1][finish[0]-1].color != self.color:
+                self.kill_piece(finish[0], finish[1], board)
+                return True
+            if (abs(start[0]-finish[0]) == 0) or (abs(start[1]-finish[1]) == 0):
+                return False
+            if board.is_empty(finish[0], finish[1]):
+                return True
+            
+        else:
+            return False
+        
     
     def generate_valid_moves_bishop(self, start, finish, board):
         if board.is_empty(finish[0], finish[1]) == False and board.background_board[finish[1]-1][finish[0]-1].color == self.color:
