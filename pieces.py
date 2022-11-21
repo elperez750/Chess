@@ -93,6 +93,24 @@ class Piece:
             return False
         
     
+    def generate_valid_moves_queen(self, start, finish, board):
+        if start[0] == finish[0] or start[1] == finish[1]:
+            return self.generate_valid_moves_rook(start, finish, board)
+        else:
+            return self.generate_valid_moves_bishop(start, finish, board)
+        
+
+    def generate_valid_moves_king(self, start, finish, board):
+        valid_moves = [(1,1), (1,0), (0, 1)]
+        if (((abs(start[0]-finish[0])), abs(start[1]-finish[1]))) in valid_moves:
+            if start[0] == finish[0] or start[1] == finish[1]:
+                return self.generate_valid_moves_rook(start, finish, board)
+            else:
+                return self.generate_valid_moves_bishop(start, finish, board)
+        return False
+
+
+
     def generate_valid_moves_bishop(self, start, finish, board):
         if board.is_empty(finish[0], finish[1]) == False and board.background_board[finish[1]-1][finish[0]-1].color == self.color:
             return False
@@ -126,6 +144,8 @@ class Piece:
         
         return self.generate_valid_moves_bishop(start, finish, board)
 
+    def check(self, king_pos):
+        pass
 
     def kill_piece(self, x, y, board):
         if board.is_empty(x, y) == False:

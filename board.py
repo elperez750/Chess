@@ -117,6 +117,8 @@ class Board:
         return None, None, None
     
     def draw_red_rectangle(self, x, y):
+        if x == None or y == None:
+            return
         rect = (0 + x * cellSize, 1 + y * cellSize, cellSize, cellSize)
         pygame.draw.rect(SCREEN, (255, 0, 0, 50), rect, 4)
 
@@ -142,6 +144,7 @@ class Board:
 
 
     def is_empty(self, x, y):
-        
+        if x or y is None:
+            return False
         return self.background_board[y-1][x-1] == 0
        
