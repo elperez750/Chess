@@ -145,6 +145,6 @@ class Board:
 
     def is_empty(self, x, y):
         if x or y is None:
-            return False
+            pass
         return self.background_board[y-1][x-1] == 0
        
