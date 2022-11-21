@@ -117,8 +117,11 @@ class Board:
         return None, None, None
     
     def draw_red_rectangle(self, x, y):
-        rect = (0 + x * cellSize, 1 + y * cellSize, cellSize, cellSize)
-        pygame.draw.rect(SCREEN, (255, 0, 0, 50), rect, 4)
+        if x is None or y is None:
+            pass
+        else:
+            rect = (0 + x * cellSize, 1 + y * cellSize, cellSize, cellSize)
+            pygame.draw.rect(SCREEN, (255, 0, 0, 50), rect, 4)
 
     def update_boards(self, moves, is_valid):
         if is_valid == False:
@@ -142,6 +145,9 @@ class Board:
 
 
     def is_empty(self, x, y):
-        
-        return self.background_board[y-1][x-1] == 0
+        if x is None or y is None:
+            pass
+        else:
+
+            return self.background_board[y-1][x-1] == 0
        

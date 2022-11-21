@@ -53,55 +53,63 @@ def main():
                     
                     first_click = moves[0][0]
                     second_click = moves[0][1]
-                    piece = board.background_board[second_click-1][first_click-1]
-                    
-                    if len(moves) == 2:
-                        if moves[0] == moves[1]:
-                            check = True
-                            board.update_boards([moves][0], check)
-                
-                        else:
-                            if piece.color == "white" and (turn % 2 == 1):
-                                if piece.piece_type == "r":
-                                    check = piece.generate_valid_moves_rook(list(moves[0]), list(moves[1]), board)
-                                elif piece.piece_type == "b":
-                                    check = piece.generate_valid_moves_bishop(list(moves[0]), list(moves[1]), board)
-                                elif piece.piece_type == "kn":
-                                    check = piece.generate_valid_moves_knight(list(moves[0]), list(moves[1]), board)
-                                else:
-                                    check = piece.white_pawn_movement((first_click, second_click), (x, y), board)
-                                
-                                if check == False:
-                                    pass
-                                else:
-                                
-                                    board.update_boards([moves][0], check)
-                                    turn +=1
-                            
-                            if piece.color == "black" and (turn % 2 == 0):
-                                if piece.piece_type == "r":
-                                    
-                                    check = piece.generate_valid_moves_rook(list(moves[0]), list(moves[1]), board)
-                            
-                                elif piece.piece_type == "b":
-                                   check = piece.generate_valid_moves_bishop(list(moves[0]), list(moves[1]), board)
-                                elif piece.piece_type == "kn":
-                                    check = piece.generate_valid_moves_knight(list(moves[0]), list(moves[1]), board)
-                                else:
-                                    check = piece.black_pawn_movement((first_click, second_click), (x, y), board)
-                                
-                                
-                                if check == False:
-                                    pass
-                                else:
-                                    board.update_boards([moves][0], check)
-                                    turn += 1
-                        
-
-
-                        selected = ()
+                    if first_click is None or second_click is None:
                         moves = []
+                        selected = ()
+                    else:
+                        piece = board.background_board[second_click-1][first_click-1]
+                    
+                        if len(moves) == 2:
+                            if moves[0] == moves[1]:
+                                check = True
+                                board.update_boards([moves][0], check)
+                    
+                            else:
+                                if piece.color == "white" and (turn % 2 == 1):
+                                    if piece.piece_type == "r":
+                                        check = piece.generate_valid_moves_rook(list(moves[0]), list(moves[1]), board)
+                                    elif piece.piece_type == "b":
+                                        check = piece.generate_valid_moves_bishop(list(moves[0]), list(moves[1]), board)
+                                    elif piece.piece_type == "kn":
+                                        check = piece.generate_valid_moves_knight(list(moves[0]), list(moves[1]), board)
+                                    else:
+                                        check = piece.white_pawn_movement((first_click, second_click), (x, y), board)
+                                    
+                                    if check == False:
+                                        pass
+                                    else:
+                                    
+                                        board.update_boards([moves][0], check)
+                                        turn +=1
                                 
+                                if piece.color == "black" and (turn % 2 == 0):
+                                    if piece.piece_type == "r":
+                                        
+                                        check = piece.generate_valid_moves_rook(list(moves[0]), list(moves[1]), board)
+                                
+                                    elif piece.piece_type == "b":
+                                        check = piece.generate_valid_moves_bishop(list(moves[0]), list(moves[1]), board)
+                                    elif piece.piece_type == "kn":
+                                        check = piece.generate_valid_moves_knight(list(moves[0]), list(moves[1]), board)
+                                    elif piece.piece_type == "q":
+                                        check = piece.generate_valid_moves_queen(list(moves[0]), list(moves[1]), board)                                
+                                    elif piece.piece_type == "k":
+                                        check = piece.generate_valid_moves_king(list(moves[0]), list(moves[1]), board)                          
+                                    else:
+                                        check = piece.black_pawn_movement((first_click, second_click), (x, y), board)
+                                    
+                                    
+                                    if check == False:
+                                        pass
+                                    else:
+                                        board.update_boards([moves][0], check)
+                                        turn += 1
+                            
+
+
+                            selected = ()
+                            moves = []
+                                    
 
                     pygame.display.update()
                 
