@@ -13,11 +13,11 @@ pygame.display.set_caption("Chess Game")
 
 
 
- 
+    
 # The clock will be used to control how fast the SCREEN updates
 clock = pygame.time.Clock()
 
-cellSize = 70
+cellSize = 70       
 
 board = Board()
 def main():
@@ -30,7 +30,7 @@ def main():
     carryOn = True
     turn = 0 
     while carryOn:
-        
+       
         # --- Main event loop
         board.draw_board(SCREEN)
         
@@ -72,9 +72,13 @@ def main():
                                         check = piece.generate_valid_moves_bishop(list(moves[0]), list(moves[1]), board)
                                     elif piece.piece_type == "kn":
                                         check = piece.generate_valid_moves_knight(list(moves[0]), list(moves[1]), board)
+                                    elif piece.piece_type == "q":
+                                        check = piece.generate_valid_moves_queen(list(moves[0]), list(moves[1]), board)                                
+                                    elif piece.piece_type == "k":
+                                        check = piece.generate_valid_moves_king(list(moves[0]), list(moves[1]), board)                          
                                     else:
                                         check = piece.white_pawn_movement((first_click, second_click), (x, y), board)
-                                    
+                                        print(check)
                                     if check == False:
                                         pass
                                     else:
@@ -97,8 +101,10 @@ def main():
                                         check = piece.generate_valid_moves_king(list(moves[0]), list(moves[1]), board)                          
                                     else:
                                         check = piece.black_pawn_movement((first_click, second_click), (x, y), board)
-                                    
-                                    
+                                    print(second_click)
+                                    if second_click == 2 and piece.piece_type == "p":
+                                        board.promotion(second_click, board)
+                                        pygame.display.update()
                                     if check == False:
                                         pass
                                     else:
@@ -111,7 +117,7 @@ def main():
                             moves = []
                                     
 
-                    pygame.display.update()
+                pygame.display.update()
                 
         # --- Limit to 60 frames per second
         clock.tick(60)

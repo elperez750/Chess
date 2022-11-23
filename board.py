@@ -69,10 +69,24 @@ class Board:
 
         outer = [0,9]
         font = pygame.font.SysFont(None, 40)
-        font_two = pygame.font.SysFont(None, 24)
+        font_two = pygame.font.SysFont(None, 17)
     
         p1 = font_two.render("Player 1", True, (43, 48, 58))
         p2 = font_two.render("Player 2", True, (43, 48, 58))
+        killed_black_rook = font_two.render(f"{BLACK_ROOK.killed}", True, (43, 48, 58))
+        killed_black_knight = font_two.render(f"{BLACK_KNIGHT.killed}", True, (43, 48, 58))
+        killed_black_bishop = font_two.render(f"{BLACK_BISHOP.killed}", True, (43, 48, 58))
+        killed_black_queen = font_two.render(f"{BLACK_QUEEN.killed}", True, (43, 48, 58))
+        killed_black_pawn = font_two.render(f"{BLACK_PAWN.killed}", True, (43, 48, 58))
+        
+
+        killed_white_rook = font_two.render(f"{WHITE_ROOK.killed}", True, (43, 48, 58))
+        killed_white_knight = font_two.render(f"{WHITE_KNIGHT.killed}", True, (43, 48, 58))
+        killed_white_bishop = font_two.render(f"{WHITE_BISHOP.killed}", True, (43, 48, 58))
+        killed_white_queen = font_two.render(f"{WHITE_QUEEN.killed}", True, (43, 48, 58))
+        killed_white_pawn = font_two.render(f"{WHITE_PAWN.killed}", True, (43, 48, 58))
+        
+        
         v_coordinates = [8, 7, 6, 5, 4, 3, 2, 1]
         h_coordinates = ["A", "B", "C", "D", "E", "F", "G", "H"]
         for row in outer:
@@ -100,7 +114,31 @@ class Board:
                 continue
 
         surface.blit(p2, pygame.Rect(cellSize*10, cellSize*0, cellSize, cellSize))
-        surface.blit(p1, pygame.Rect(cellSize*10, cellSize*6, cellSize, cellSize))
+        surface.blit(WHITE_ROOK_IMAGE, pygame.Rect(9.5* cellSize, 1* cellSize, cellSize, cellSize))
+        surface.blit(killed_white_rook, pygame.Rect(cellSize*10, cellSize*0.97, cellSize, cellSize))
+        surface.blit(WHITE_KNIGHT_IMAGE, pygame.Rect(11* cellSize, 1* cellSize, cellSize, cellSize))
+        surface.blit(killed_white_knight, pygame.Rect(cellSize*11.5, cellSize*0.97, cellSize, cellSize))
+        surface.blit(WHITE_BISHOP_IMAGE, pygame.Rect(9.5* cellSize, 2* cellSize, cellSize, cellSize))
+        surface.blit(killed_white_bishop, pygame.Rect(cellSize*10, cellSize*1.97, cellSize, cellSize))
+        surface.blit(WHITE_QUEEN_IMAGE, pygame.Rect(11* cellSize, 2* cellSize, cellSize, cellSize))
+        surface.blit(killed_white_queen, pygame.Rect(cellSize*11.5, cellSize*1.97, cellSize, cellSize))
+        surface.blit(WHITE_PAWN_IMAGE, pygame.Rect(9.5* cellSize, 3* cellSize, cellSize, cellSize))
+        surface.blit(killed_white_pawn, pygame.Rect(cellSize*10, cellSize*2.97, cellSize, cellSize))
+        surface.blit(p1, pygame.Rect(cellSize*10, cellSize*5, cellSize, cellSize))
+
+
+        
+        surface.blit(BLACK_ROOK_IMAGE, pygame.Rect(9.5* cellSize, 6* cellSize, cellSize, cellSize))
+        surface.blit(killed_black_rook, pygame.Rect(cellSize*10, cellSize*5.97, cellSize, cellSize))
+        surface.blit(BLACK_KNIGHT_IMAGE, pygame.Rect(11* cellSize, 6* cellSize, cellSize, cellSize))
+        surface.blit(killed_black_knight, pygame.Rect(cellSize*11.5, cellSize*5.97, cellSize, cellSize))
+        surface.blit(BLACK_BISHOP_IMAGE, pygame.Rect(9.5* cellSize, 7* cellSize, cellSize, cellSize))
+        surface.blit(killed_black_bishop, pygame.Rect(cellSize*10, cellSize*6.97, cellSize, cellSize))
+        surface.blit(BLACK_QUEEN_IMAGE, pygame.Rect(11* cellSize, 7* cellSize, cellSize, cellSize))
+        surface.blit(killed_black_queen, pygame.Rect(cellSize*11.5, cellSize*6.97, cellSize, cellSize))
+        surface.blit(BLACK_PAWN_IMAGE, pygame.Rect(9.5* cellSize, 8* cellSize, cellSize, cellSize))
+        surface.blit(killed_black_pawn, pygame.Rect(cellSize*10, cellSize*7.97, cellSize, cellSize))
+       
 
     
         
@@ -150,4 +188,10 @@ class Board:
         else:
 
             return self.background_board[y-1][x-1] == 0
-       
+    
+    def promotion(self, coordinates, board):
+        surface = pygame.Surface((100, 100))
+        surface.fill((49, 20, 100))
+        pygame.draw.rect(surface, (8, 9, 100), (0, 0, 100, 100))
+        SCREEN.blit(surface, surface.get_rect())
+        
