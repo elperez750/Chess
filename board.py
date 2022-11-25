@@ -1,6 +1,6 @@
 import pygame
 from pieces import Piece
-SIZE = (900, 700)
+SIZE = (1100, 700)
 SCREEN = pygame.display.set_mode(SIZE)
 
 
@@ -54,8 +54,9 @@ class Board:
     def __init__(self):
         self.background_board = [[WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK], [WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN], [BLACK_ROOK, BLACK_KNIGHT, BLACK_BISHOP, BLACK_QUEEN, BLACK_KING, BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK]]
         self.board = [[WHITE_ROOK_IMAGE,WHITE_KNIGHT_IMAGE, WHITE_BISHOP_IMAGE,WHITE_QUEEN_IMAGE,WHITE_KING_IMAGE,WHITE_BISHOP_IMAGE,WHITE_KNIGHT_IMAGE,WHITE_ROOK_IMAGE], [WHITE_PAWN_IMAGE,WHITE_PAWN_IMAGE,WHITE_PAWN_IMAGE,WHITE_PAWN_IMAGE,WHITE_PAWN_IMAGE,WHITE_PAWN_IMAGE,WHITE_PAWN_IMAGE,WHITE_PAWN_IMAGE], [0 , 0, 0, 0, 0, 0, 0, 0], [0 , 0, 0, 0, 0, 0, 0, 0], [0 , 0, 0, 0, 0, 0, 0, 0], [0 , 0, 0, 0, 0, 0, 0, 0], [BLACK_PAWN_IMAGE, BLACK_PAWN_IMAGE, BLACK_PAWN_IMAGE, BLACK_PAWN_IMAGE, BLACK_PAWN_IMAGE, BLACK_PAWN_IMAGE, BLACK_PAWN_IMAGE, BLACK_PAWN_IMAGE], [BLACK_ROOK_IMAGE, BLACK_KNIGHT_IMAGE,BLACK_BISHOP_IMAGE,BLACK_QUEEN_IMAGE,BLACK_KING_IMAGE, BLACK_BISHOP_IMAGE,BLACK_KNIGHT_IMAGE, BLACK_ROOK_IMAGE]]
-        self.pos = None
-    
+        self.promotion = False
+        self.color_to_blit = None
+        self.coordinate_to_replace = None
 
     def draw_board(self, surface):
         board = pygame.Surface((cellSize * 10, cellSize * 10))
@@ -69,7 +70,7 @@ class Board:
 
         outer = [0,9]
         font = pygame.font.SysFont(None, 40)
-        font_two = pygame.font.SysFont(None, 17)
+        font_two = pygame.font.SysFont(None, 19)
     
         p1 = font_two.render("Player 1", True, (43, 48, 58))
         p2 = font_two.render("Player 2", True, (43, 48, 58))
@@ -138,18 +139,55 @@ class Board:
         surface.blit(killed_black_queen, pygame.Rect(cellSize*11.5, cellSize*6.97, cellSize, cellSize))
         surface.blit(BLACK_PAWN_IMAGE, pygame.Rect(9.5* cellSize, 8* cellSize, cellSize, cellSize))
         surface.blit(killed_black_pawn, pygame.Rect(cellSize*10, cellSize*7.97, cellSize, cellSize))
-       
-
-    
+        if self.promotion == True:
+                
+            if self.color_to_blit == "black":
+                SCREEN.blit(BLACK_KNIGHT_IMAGE, pygame.Rect(13* cellSize, 6* cellSize, cellSize, cellSize))
+                SCREEN.blit(BLACK_ROOK_IMAGE, pygame.Rect(13* cellSize, 5* cellSize, cellSize, cellSize))
+                SCREEN.blit(BLACK_QUEEN_IMAGE, pygame.Rect(13* cellSize, 4* cellSize, cellSize, cellSize))
+                SCREEN.blit(BLACK_BISHOP_IMAGE, pygame.Rect(13* cellSize, 3    * cellSize, cellSize, cellSize))
+                    
+            else:
+                surface.blit(WHITE_KNIGHT_IMAGE, pygame.Rect(14* cellSize, 6* cellSize, cellSize, cellSize))
+                surface.blit(WHITE_ROOK_IMAGE, pygame.Rect(14* cellSize, 5* cellSize, cellSize, cellSize))
+                surface.blit(WHITE_QUEEN_IMAGE, pygame.Rect(14* cellSize, 4* cellSize, cellSize, cellSize))
+                surface.blit(WHITE_BISHOP_IMAGE, pygame.Rect(14* cellSize, 3    * cellSize, cellSize, cellSize))
+            
+            
+            
+                
         
+    def replace_values(self, coor_to_replace, coor_one, coor_two) :
+        translated_values = {(13, 3): (7, 2), (13,4): (7, 3), (13,5): (7, 0), (13,6): (7,1), (14, 3): (0, 2), (14,4): (0, 3), (14,5): (0, 0), (14,6): (0,1)}
+        if self.promotion == True:
+                
+                
+          
+            self.background_board[coor_to_replace[1]-1][coor_to_replace[0]-1] = new = Piece(self.background_board[translated_values[(coor_one, coor_two)][0]][translated_values[(coor_one, coor_two)][1]].color, self.background_board[translated_values[(coor_one, coor_two)][0]][translated_values[((coor_one, coor_two))][1]].piece_type, self.background_board[translated_values[(coor_one, coor_two)][0]][translated_values[((coor_one, coor_two))][1]].image)
+            self.board[coor_to_replace[1]-1][coor_to_replace[0]-1] = pygame.transform.scale(pygame.image.load(new.image), (PIECE_SIZE, PIECE_SIZE))
+            self.coordinate_to_replace = ()
+            self.promotion = False
+            self.draw_board(SCREEN)
+            
+                
+
     def get_square_under_mouse(self):
+        
         mouse_pos = pygame.Vector2(pygame.mouse.get_pos()) 
         
         x, y = [int(v // cellSize) for v in mouse_pos]
         
-        try: 
-            if (9 > x >= 1) and (9 > y >= 1):
-                return(self.background_board[y-1][x-1], x, y)
+        try:
+        
+            if self.promotion == False:
+                if (9 > x >= 1) and (9 > y >= 1):
+                    return(self.background_board[y-1][x-1], x, y)
+            if self.promotion == True:  
+                return (x, y)
+            
+            
+                
+                    
         except IndexError: 
             return(None, x, y)
         return None, None, None
@@ -186,12 +224,7 @@ class Board:
         if x is None or y is None:
             pass
         else:
-
             return self.background_board[y-1][x-1] == 0
     
-    def promotion(self, coordinates, board):
-        surface = pygame.Surface((100, 100))
-        surface.fill((49, 20, 100))
-        pygame.draw.rect(surface, (8, 9, 100), (0, 0, 100, 100))
-        SCREEN.blit(surface, surface.get_rect())
+    
         

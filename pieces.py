@@ -11,6 +11,7 @@ class Piece:
         self.piece_type = piece_type
         self.image = image
         self.killed = 0
+        
 
     def black_pawn_movement(self, start, end, board):
         valid_moves = [(start[0], start[1]-1), (start[0], start[1]-2)]
