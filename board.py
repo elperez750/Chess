@@ -7,6 +7,9 @@ SCREEN = pygame.display.set_mode(SIZE)
 cellSize = 70
 PIECE_SIZE = 75
 
+
+MENU_BAR = pygame.transform.scale(pygame.image.load("/Users/elper2/Documents/Python/Chess/images/menu_bar.png"), (PIECE_SIZE, PIECE_SIZE))
+QUESTION = pygame.transform.scale(pygame.image.load("/Users/elper2/Documents/Python/Chess/images/question.png"), (35, 35))
 BLACK_BISHOP = Piece("black", "b", "/Users/elper2/Documents/Python/Chess/images/black_bishop.png")
 BLACK_BISHOP_IMAGE = pygame.transform.scale(pygame.image.load(BLACK_BISHOP.image), (PIECE_SIZE, PIECE_SIZE))
 
@@ -57,6 +60,11 @@ class Board:
         self.promotion = False
         self.color_to_blit = None
         self.coordinate_to_replace = None
+        self.menu_state = "main"
+        self.turn = 0
+        self.white_king_pos = (5, 1)
+        self.black_king_pos = (5, 8)
+        self.king_in_check = None
 
     def draw_board(self, surface):
         board = pygame.Surface((cellSize * 10, cellSize * 10))
@@ -69,11 +77,12 @@ class Board:
             surface.blit(board, board.get_rect())
 
         outer = [0,9]
-        font = pygame.font.SysFont(None, 40)
-        font_two = pygame.font.SysFont(None, 19)
+        font = pygame.font.Font("Libre_Baskerville/LibreBaskerville-Bold.ttf", 22)
+        font_two = pygame.font.Font("Libre_Baskerville/LibreBaskerville-Bold.ttf", 13)
     
-        p1 = font_two.render("Player 1", True, (43, 48, 58))
-        p2 = font_two.render("Player 2", True, (43, 48, 58))
+        p1 = font.render("Player 1", True, (43, 48, 58))
+        p2 = font.render("Player 2", True, (43, 48, 58))
+        promotion_font = font_two.render("Select a piece to replace your pawn", True, (43, 48, 58))
         killed_black_rook = font_two.render(f"{BLACK_ROOK.killed}", True, (43, 48, 58))
         killed_black_knight = font_two.render(f"{BLACK_KNIGHT.killed}", True, (43, 48, 58))
         killed_black_bishop = font_two.render(f"{BLACK_BISHOP.killed}", True, (43, 48, 58))
@@ -102,8 +111,8 @@ class Board:
                 letter = font.render(h_coordinates[col-1], True, (43, 48, 58))
                 number = font.render(str(v_coordinates[col-1]), True, (43, 48, 58))
                 if row == 9:
-                    surface.blit(number, pygame.Rect(row*cellSize, col*cellSize, cellSize, cellSize))
-                    surface.blit(letter, pygame.Rect(col*cellSize, row*cellSize, cellSize, cellSize))
+                    surface.blit(number, pygame.Rect(row*cellSize, (col+0.3)*cellSize, cellSize, cellSize))
+                    surface.blit(letter, pygame.Rect((col+0.4)*cellSize, row*cellSize, cellSize, cellSize))
                 
  
         
@@ -116,72 +125,74 @@ class Board:
 
         surface.blit(p2, pygame.Rect(cellSize*10, cellSize*0, cellSize, cellSize))
         surface.blit(WHITE_ROOK_IMAGE, pygame.Rect(9.5* cellSize, 1* cellSize, cellSize, cellSize))
-        surface.blit(killed_white_rook, pygame.Rect(cellSize*10, cellSize*0.97, cellSize, cellSize))
+        surface.blit(killed_white_rook, pygame.Rect(cellSize*10, cellSize*0.90, cellSize, cellSize))
         surface.blit(WHITE_KNIGHT_IMAGE, pygame.Rect(11* cellSize, 1* cellSize, cellSize, cellSize))
-        surface.blit(killed_white_knight, pygame.Rect(cellSize*11.5, cellSize*0.97, cellSize, cellSize))
+        surface.blit(killed_white_knight, pygame.Rect(cellSize*11.5, cellSize*0.90, cellSize, cellSize))
         surface.blit(WHITE_BISHOP_IMAGE, pygame.Rect(9.5* cellSize, 2* cellSize, cellSize, cellSize))
-        surface.blit(killed_white_bishop, pygame.Rect(cellSize*10, cellSize*1.97, cellSize, cellSize))
+        surface.blit(killed_white_bishop, pygame.Rect(cellSize*10, cellSize*1.90, cellSize, cellSize))
         surface.blit(WHITE_QUEEN_IMAGE, pygame.Rect(11* cellSize, 2* cellSize, cellSize, cellSize))
-        surface.blit(killed_white_queen, pygame.Rect(cellSize*11.5, cellSize*1.97, cellSize, cellSize))
+        surface.blit(killed_white_queen, pygame.Rect(cellSize*11.5, cellSize*1.90, cellSize, cellSize))
         surface.blit(WHITE_PAWN_IMAGE, pygame.Rect(9.5* cellSize, 3* cellSize, cellSize, cellSize))
-        surface.blit(killed_white_pawn, pygame.Rect(cellSize*10, cellSize*2.97, cellSize, cellSize))
+        surface.blit(killed_white_pawn, pygame.Rect(cellSize*10, cellSize*2.90, cellSize, cellSize))
         surface.blit(p1, pygame.Rect(cellSize*10, cellSize*5, cellSize, cellSize))
 
 
         
         surface.blit(BLACK_ROOK_IMAGE, pygame.Rect(9.5* cellSize, 6* cellSize, cellSize, cellSize))
-        surface.blit(killed_black_rook, pygame.Rect(cellSize*10, cellSize*5.97, cellSize, cellSize))
+        surface.blit(killed_black_rook, pygame.Rect(cellSize*10, cellSize*5.90, cellSize, cellSize))
         surface.blit(BLACK_KNIGHT_IMAGE, pygame.Rect(11* cellSize, 6* cellSize, cellSize, cellSize))
-        surface.blit(killed_black_knight, pygame.Rect(cellSize*11.5, cellSize*5.97, cellSize, cellSize))
+        surface.blit(killed_black_knight, pygame.Rect(cellSize*11.5, cellSize*5.90, cellSize, cellSize))
         surface.blit(BLACK_BISHOP_IMAGE, pygame.Rect(9.5* cellSize, 7* cellSize, cellSize, cellSize))
-        surface.blit(killed_black_bishop, pygame.Rect(cellSize*10, cellSize*6.97, cellSize, cellSize))
+        surface.blit(killed_black_bishop, pygame.Rect(cellSize*10, cellSize*6.90, cellSize, cellSize))
         surface.blit(BLACK_QUEEN_IMAGE, pygame.Rect(11* cellSize, 7* cellSize, cellSize, cellSize))
-        surface.blit(killed_black_queen, pygame.Rect(cellSize*11.5, cellSize*6.97, cellSize, cellSize))
+        surface.blit(killed_black_queen, pygame.Rect(cellSize*11.5, cellSize*6.90, cellSize, cellSize))
         surface.blit(BLACK_PAWN_IMAGE, pygame.Rect(9.5* cellSize, 8* cellSize, cellSize, cellSize))
-        surface.blit(killed_black_pawn, pygame.Rect(cellSize*10, cellSize*7.97, cellSize, cellSize))
+        surface.blit(killed_black_pawn, pygame.Rect(cellSize*10, cellSize*7.90, cellSize, cellSize))
+        surface.blit(MENU_BAR, pygame.Rect(cellSize*14.5, cellSize*0, cellSize, cellSize))
         if self.promotion == True:
-                
+
+            surface.blit(promotion_font, pygame.Rect(12 * cellSize, 3.8*cellSize, cellSize, cellSize))
             if self.color_to_blit == "black":
-                SCREEN.blit(BLACK_KNIGHT_IMAGE, pygame.Rect(13* cellSize, 6* cellSize, cellSize, cellSize))
-                SCREEN.blit(BLACK_ROOK_IMAGE, pygame.Rect(13* cellSize, 5* cellSize, cellSize, cellSize))
-                SCREEN.blit(BLACK_QUEEN_IMAGE, pygame.Rect(13* cellSize, 4* cellSize, cellSize, cellSize))
-                SCREEN.blit(BLACK_BISHOP_IMAGE, pygame.Rect(13* cellSize, 3    * cellSize, cellSize, cellSize))
+                surface.blit(BLACK_KNIGHT_IMAGE, pygame.Rect(13* cellSize, 7* cellSize, cellSize, cellSize))
+                surface.blit(BLACK_ROOK_IMAGE, pygame.Rect(13* cellSize, 6* cellSize, cellSize, cellSize))
+                surface.blit(BLACK_QUEEN_IMAGE, pygame.Rect(13* cellSize, 5* cellSize, cellSize, cellSize))
+                surface.blit(BLACK_BISHOP_IMAGE, pygame.Rect(13* cellSize, 4 * cellSize, cellSize, cellSize))
                     
             else:
-                surface.blit(WHITE_KNIGHT_IMAGE, pygame.Rect(14* cellSize, 6* cellSize, cellSize, cellSize))
-                surface.blit(WHITE_ROOK_IMAGE, pygame.Rect(14* cellSize, 5* cellSize, cellSize, cellSize))
-                surface.blit(WHITE_QUEEN_IMAGE, pygame.Rect(14* cellSize, 4* cellSize, cellSize, cellSize))
-                surface.blit(WHITE_BISHOP_IMAGE, pygame.Rect(14* cellSize, 3    * cellSize, cellSize, cellSize))
+                surface.blit(WHITE_KNIGHT_IMAGE, pygame.Rect(14* cellSize, 7* cellSize, cellSize, cellSize))
+                surface.blit(WHITE_ROOK_IMAGE, pygame.Rect(14* cellSize, 6* cellSize, cellSize, cellSize))
+                surface.blit(WHITE_QUEEN_IMAGE, pygame.Rect(14* cellSize, 5* cellSize, cellSize, cellSize))
+                surface.blit(WHITE_BISHOP_IMAGE, pygame.Rect(14* cellSize, 4 * cellSize, cellSize, cellSize))
             
             
             
                 
         
     def replace_values(self, coor_to_replace, coor_one, coor_two) :
-        translated_values = {(13, 3): (7, 2), (13,4): (7, 3), (13,5): (7, 0), (13,6): (7,1), (14, 3): (0, 2), (14,4): (0, 3), (14,5): (0, 0), (14,6): (0,1)}
+        translated_values = {(13, 4): BLACK_BISHOP, (13,5): BLACK_QUEEN, (13,6): BLACK_ROOK, (13,7): BLACK_KNIGHT, (14, 4): WHITE_BISHOP, (14,5): WHITE_QUEEN, (14,6): WHITE_ROOK, (14,7): WHITE_KNIGHT}
         if self.promotion == True:
-                
-                
-          
-            self.background_board[coor_to_replace[1]-1][coor_to_replace[0]-1] = new = Piece(self.background_board[translated_values[(coor_one, coor_two)][0]][translated_values[(coor_one, coor_two)][1]].color, self.background_board[translated_values[(coor_one, coor_two)][0]][translated_values[((coor_one, coor_two))][1]].piece_type, self.background_board[translated_values[(coor_one, coor_two)][0]][translated_values[((coor_one, coor_two))][1]].image)
+            
+            self.background_board[coor_to_replace[1]-1][coor_to_replace[0]-1] = new = translated_values[coor_one, coor_two]
             self.board[coor_to_replace[1]-1][coor_to_replace[0]-1] = pygame.transform.scale(pygame.image.load(new.image), (PIECE_SIZE, PIECE_SIZE))
             self.coordinate_to_replace = ()
             self.promotion = False
             self.draw_board(SCREEN)
             
-                
-
+            
     def get_square_under_mouse(self):
         
         mouse_pos = pygame.Vector2(pygame.mouse.get_pos()) 
         
         x, y = [int(v // cellSize) for v in mouse_pos]
-        
+    
         try:
         
             if self.promotion == False:
+                if ((x == 14) and (y == 0)) or ((x == 15) and (y == 0)):
+                    return (None, x, y)
                 if (9 > x >= 1) and (9 > y >= 1):
                     return(self.background_board[y-1][x-1], x, y)
+                
             if self.promotion == True:  
                 return (x, y)
             
@@ -199,7 +210,10 @@ class Board:
             rect = (0 + x * cellSize, 1 + y * cellSize, cellSize, cellSize)
             pygame.draw.rect(SCREEN, (255, 0, 0, 50), rect, 4)
 
-    def update_boards(self, moves, is_valid):
+    def update_boards(self, moves, is_valid, piece, board):
+        if moves[0] == moves[1]:
+            self.draw_board(SCREEN)
+            return
         if is_valid == False:
             first = moves[0][0]
             second = moves[0][1]
@@ -211,13 +225,93 @@ class Board:
             third = moves[1][0]
             fourth = moves[1][1]
             
-            
-            
-        self.board[second-1][first-1], self.board[fourth-1][third-1] = self.board[fourth-1][third-1], self.board[second-1][first-1]
-        self.background_board[second-1][first-1], self.background_board[fourth-1][third-1] = self.background_board[fourth-1][third-1], self.background_board[second-1][first-1]
-        self.draw_board(SCREEN)
+       
         
+        self.background_board[second-1][first-1], self.background_board[fourth-1][third-1] = self.background_board[fourth-1][third-1], self.background_board[second-1][first-1]
+        self.board[second-1][first-1], self.board[fourth-1][third-1] = self.board[fourth-1][third-1], self.board[second-1][first-1]
+        
+        
+        if piece.color == "white":
+            print("white")
+            can_move_black = piece.check(board.black_king_pos[0], board.black_king_pos[1], "black", board)
+            can_move_white = piece.check(board.white_king_pos[0], board.white_king_pos[1], piece.color, board)
+            print(can_move_black, can_move_white)
+            if can_move_white == False:
+                checkmate = piece.checkmate(board.white_king_pos[0], board.white_king_pos[1], piece.color, board)
+                print(checkmate)
+                if checkmate.count(False) == 7 or checkmate.count(False) == 8:
+                    font = pygame.font.Font("Libre_Baskerville/LibreBaskerville-Bold.ttf", 80)
+                    draw_text = font.render("Game Over!", True, (80, 10, 10))
+                    self.draw_board(SCREEN)
+                    SCREEN.blit(draw_text, (100, 300))
+                    pygame.display.update()
+                    pygame.time.delay(3000)
+                    pygame.quit()
+                else:
+                    self.board[fourth-1][third-1], self.board[second-1][first-1] = self.board[second-1][first-1], self.board[fourth-1][third-1]
+                    self.background_board[fourth-1][third-1], self.background_board[second-1][first-1] = self.background_board[second-1][first-1], self.background_board[fourth-1][third-1]
+                    board.turn = 2
+            if can_move_black == False:
+                checkmate = piece.checkmate(board.black_king_pos[0], board.black_king_pos[1], "black", board)
+                print("caused by white piece")
+                print(checkmate)
+                if checkmate.count(False) == 7 or checkmate.count(False) == 8:
+                    font = pygame.font.Font("Libre_Baskerville/LibreBaskerville-Bold.ttf", 80)
+                    draw_text = font.render("Game Over!", True, (80, 10, 10))
+                    self.draw_board(SCREEN)
+                    SCREEN.blit(draw_text, (100, 300))
+                    pygame.display.update()
+                    pygame.time.delay(3000)
+                    pygame.quit()
+                print("In checkaa")
+            if piece.piece_type == "k" and (can_move_black == False or can_move_white == False):
+                board.white_king_pos = (first, second)
+                print(board.white_king_pos[0], board.white_king_pos[1])
+                print("Yes ")
 
+            self.draw_board(SCREEN)
+            board.turn +=1
+
+
+        if piece.color == "black":
+            print("black")
+            can_move_black = piece.check(board.black_king_pos[0], board.black_king_pos[1], piece.color, board)
+            can_move_white = piece.check(board.white_king_pos[0], board.white_king_pos[1], "white", board)
+            
+            if can_move_black == False:
+                checkmate = piece.checkmate(board.black_king_pos[0], board.black_king_pos[1], piece.color, board)
+                print(checkmate)
+                print("caused by black piece")
+                if checkmate.count(False) == 7 or checkmate.count(False) == 8:
+                    font = pygame.font.Font("Libre_Baskerville/LibreBaskerville-Bold.ttf", 80)
+                    draw_text = font.render("Game Over!", True, (80, 10, 10))
+                    self.draw_board(SCREEN)
+                    SCREEN.blit(draw_text, (100, 300))
+                    pygame.display.update()
+                    pygame.time.delay(3000)
+                    pygame.quit()
+                else:
+                    self.board[fourth-1][third-1], self.board[second-1][first-1] = self.board[second-1][first-1], self.board[fourth-1][third-1]
+                    self.background_board[fourth-1][third-1], self.background_board[second-1][first-1] = self.background_board[second-1][first-1], self.background_board[fourth-1][third-1]
+                    board.turn = 1
+            if can_move_white == False:
+                checkmate = piece.checkmate(board.white_king_pos[0], board.white_king_pos[1], "white", board)
+                print(checkmate)
+                if checkmate.count(False) == 7 or checkmate.count(False) == 8:
+                    font = pygame.font.Font("Libre_Baskerville/LibreBaskerville-Bold.ttf", 80)
+                    draw_text = font.render("Game Over!", True, (80, 10, 10))
+                    self.draw_board(SCREEN)
+                    SCREEN.blit(draw_text, (100, 300))
+                    pygame.display.update()
+                    pygame.time.delay(3000)
+                    pygame.quit()
+            if piece.piece_type == "k" and (can_move_black == False or can_move_white == False):
+                board.black_king_pos = (first, second)
+                print(board.black_king_pos[0], board.black_king_pos[1])
+                print("Yes ")
+
+            self.draw_board(SCREEN)
+            board.turn +=1
 
 
     def is_empty(self, x, y):
